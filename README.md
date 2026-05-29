@@ -64,6 +64,25 @@ sudo nmcli device wifi connect <SSID_PH> ifname wlan1
 
 # Vérifier
 nmcli device status
+
+# Désactiver wpa_supplicant pour éviter les conflits au redémarrage
+sudo systemctl stop wpa_supplicant
+sudo systemctl disable wpa_supplicant
+
+# Nettoyer les fichiers socket
+sudo rm -f /var/run/wpa_supplicant/wlan0
+sudo rm -f /var/run/wpa_supplicant/wlan1
+
+# Associer explicitement chaque connexion à son interface
+sudo nmcli connection modify MP1_3691FA connection.interface-name wlan0
+sudo nmcli connection modify MP1_A9470 connection.interface-name wlan1
+
+# Réessayer indéfiniment en cas d'échec de connexion
+sudo nmcli connection modify MP1_3691FA connection.autoconnect-retries 0
+sudo nmcli connection modify MP1_A9470 connection.autoconnect-retries 0
+
+# Redémarrer NetworkManager
+sudo systemctl restart NetworkManager
 ```
 
 ### 3. Configurer le bridge
