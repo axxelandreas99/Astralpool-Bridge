@@ -12,7 +12,7 @@
   action:
     - service: notify.notify
       data:
-        title: "⚠️ Piscine - pH bas"
+        title: "Piscine - pH bas"
         message: "pH actuel : {{ states('sensor.piscine_ph') }}"
 
 - id: alerte_ph_haut
@@ -26,7 +26,7 @@
   action:
     - service: notify.notify
       data:
-        title: "⚠️ Piscine - pH élevé"
+        title: "Piscine - pH élevé"
         message: "pH actuel : {{ states('sensor.piscine_ph') }}"
 
 - id: alerte_redox_bas
@@ -40,7 +40,7 @@
   action:
     - service: notify.notify
       data:
-        title: "⚠️ Piscine - Redox bas"
+        title: "Piscine - Redox bas"
         message: "Redox actuel : {{ states('sensor.piscine_redox') }} mV"
 
 - id: alerte_redox_haut
@@ -54,7 +54,7 @@
   action:
     - service: notify.notify
       data:
-        title: "⚠️ Piscine - Redox élevé"
+        title: "Piscine - Redox élevé"
         message: "Redox actuel : {{ states('sensor.piscine_redox') }} mV"
 
 - id: alerte_pompe_ph
@@ -67,7 +67,7 @@
   action:
     - service: notify.notify
       data:
-        title: "🚨 Piscine - Alarme pompe pH"
+        title: "Piscine - Alarme pompe pH"
         message: "La pompe pH signale une alarme !"
 
 - id: alerte_pompe_redox
@@ -80,5 +80,5 @@
   action:
     - service: notify.notify
       data:
-        title: "🚨 Piscine - Alarme pompe Redox"
+        title: "Piscine - Alarme pompe Redox"
         message: "La pompe Redox signale une alarme !"
