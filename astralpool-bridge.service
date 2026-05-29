@@ -1,0 +1,13 @@
+[Unit]
+Description=AstralPool Micro UP Bridge
+After=network.target NetworkManager.service
+Wants=NetworkManager.service
+
+[Service]
+ExecStart=/usr/bin/python3 /opt/astralpool/bridge.py
+Restart=always
+RestartSec=10
+User=root
+
+[Install]
+WantedBy=multi-user.target

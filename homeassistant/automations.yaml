@@ -1,0 +1,84 @@
+# ─── AstralPool Micro UP — Alertes automatiques ──────────
+# À ajouter dans automations.yaml de Home Assistant
+
+- id: alerte_ph_bas
+  alias: "Piscine - pH trop bas"
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.piscine_ph
+      below: 6.9
+      for:
+        minutes: 5
+  action:
+    - service: notify.notify
+      data:
+        title: "⚠️ Piscine - pH bas"
+        message: "pH actuel : {{ states('sensor.piscine_ph') }}"
+
+- id: alerte_ph_haut
+  alias: "Piscine - pH trop haut"
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.piscine_ph
+      above: 7.6
+      for:
+        minutes: 5
+  action:
+    - service: notify.notify
+      data:
+        title: "⚠️ Piscine - pH élevé"
+        message: "pH actuel : {{ states('sensor.piscine_ph') }}"
+
+- id: alerte_redox_bas
+  alias: "Piscine - Redox trop bas"
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.piscine_redox
+      below: 300
+      for:
+        minutes: 5
+  action:
+    - service: notify.notify
+      data:
+        title: "⚠️ Piscine - Redox bas"
+        message: "Redox actuel : {{ states('sensor.piscine_redox') }} mV"
+
+- id: alerte_redox_haut
+  alias: "Piscine - Redox trop haut"
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.piscine_redox
+      above: 800
+      for:
+        minutes: 5
+  action:
+    - service: notify.notify
+      data:
+        title: "⚠️ Piscine - Redox élevé"
+        message: "Redox actuel : {{ states('sensor.piscine_redox') }} mV"
+
+- id: alerte_pompe_ph
+  alias: "Piscine - Alarme pompe pH"
+  trigger:
+    - platform: state
+      entity_id: sensor.piscine_ph
+      attribute: alarm
+      to: true
+  action:
+    - service: notify.notify
+      data:
+        title: "🚨 Piscine - Alarme pompe pH"
+        message: "La pompe pH signale une alarme !"
+
+- id: alerte_pompe_redox
+  alias: "Piscine - Alarme pompe Redox"
+  trigger:
+    - platform: state
+      entity_id: sensor.piscine_redox
+      attribute: alarm
+      to: true
+  action:
+    - service: notify.notify
+      data:
+        title: "🚨 Piscine - Alarme pompe Redox"
+        message: "La pompe Redox signale une alarme !"

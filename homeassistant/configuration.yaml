@@ -1,0 +1,55 @@
+# ─── AstralPool Micro UP — Sensors REST ──────────────────
+# À ajouter dans configuration.yaml de Home Assistant
+# Remplacez 192.168.1.180 par l'IP de votre Raspberry Pi
+
+sensor:
+  - platform: rest
+    name: "Piscine pH"
+    unique_id: piscine_ph_current
+    resource: http://192.168.1.180:8080/ph
+    value_template: "{{ value_json.current }}"
+    unit_of_measurement: "pH"
+    device_class: ph
+    state_class: measurement
+    scan_interval: 30
+    json_attributes:
+      - tPoint
+      - min
+      - max
+      - alarm
+      - pump_status
+      - calibDate
+
+  - platform: rest
+    name: "Piscine Redox"
+    unique_id: piscine_redox_current
+    resource: http://192.168.1.180:8080/redox
+    value_template: "{{ value_json.current }}"
+    unit_of_measurement: "mV"
+    state_class: measurement
+    scan_interval: 30
+    json_attributes:
+      - tPoint
+      - min
+      - max
+      - alarm
+      - pump_status
+      - calibDate
+
+  - platform: rest
+    name: "Piscine pH Consigne"
+    unique_id: piscine_ph_tpoint
+    resource: http://192.168.1.180:8080/ph
+    value_template: "{{ value_json.tPoint }}"
+    unit_of_measurement: "pH"
+    state_class: measurement
+    scan_interval: 30
+
+  - platform: rest
+    name: "Piscine Redox Consigne"
+    unique_id: piscine_redox_tpoint
+    resource: http://192.168.1.180:8080/redox
+    value_template: "{{ value_json.tPoint }}"
+    unit_of_measurement: "mV"
+    state_class: measurement
+    scan_interval: 30

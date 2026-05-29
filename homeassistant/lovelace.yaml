@@ -1,0 +1,57 @@
+# ─── AstralPool Micro UP — Dashboard Lovelace ────────────
+# Dans Home Assistant : Tableau de bord → Ajouter → mode YAML brut
+
+title: Piscine
+views:
+  - title: Piscine
+    icon: mdi:pool
+    cards:
+      - type: gauge
+        entity: sensor.piscine_ph
+        name: pH
+        min: 6.5
+        max: 8.0
+        severity:
+          green: 6.9
+          yellow: 7.4
+          red: 7.6
+
+      - type: gauge
+        entity: sensor.piscine_redox
+        name: Redox
+        min: 200
+        max: 900
+        severity:
+          green: 300
+          yellow: 700
+          red: 800
+
+      - type: entities
+        title: Détails
+        entities:
+          - entity: sensor.piscine_ph
+            name: pH mesuré
+          - entity: sensor.piscine_ph_consigne
+            name: Consigne pH
+          - entity: sensor.piscine_redox
+            name: Redox mesuré
+          - entity: sensor.piscine_redox_consigne
+            name: Consigne Redox
+
+      - type: history-graph
+        title: Historique pH 24h
+        hours_to_show: 24
+        entities:
+          - entity: sensor.piscine_ph
+            name: pH
+          - entity: sensor.piscine_ph_consigne
+            name: Consigne
+
+      - type: history-graph
+        title: Historique Redox 24h
+        hours_to_show: 24
+        entities:
+          - entity: sensor.piscine_redox
+            name: Redox
+          - entity: sensor.piscine_redox_consigne
+            name: Consigne
