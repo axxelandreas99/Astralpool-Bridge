@@ -8,10 +8,12 @@ Endpoints HTTP exposés :
   GET  /status        → toutes les données JSON
   GET  /ph            → données pH JSON
   GET  /redox         → données redox JSON
+  GET  /temperature   → température eau JSON
   POST /ph/setpoint   → changer consigne pH    {"value": 7.2}
   POST /redox/setpoint→ changer consigne redox {"value": 720}
 """
 
+import glob
 import socket
 import threading
 import time
@@ -41,6 +43,18 @@ SETPOINT_LIMITS = {
     "ph":    {"min": 6.5,  "max": 7.8},   # pH raisonnable pour piscine
     "redox": {"min": 500,  "max": 900},   # mV raisonnable
 }
+
+# ─── SONDE DS18B20 ────────────────────────────────────────────────────────
+W1_PATH = "/sys/bus/w1/devices/28-b51f720a6461/temperature"
+
+def lire_temperature():
+    """Lit la température depuis la sonde DS18B20."""
+    try:
+        with open(W1_PATH, "r") as f:
+            raw = int(f.read().strip())
+            return round(raw / 1000, 1)
+    except Exception as e:
+        return None
 
 # ─── CONSTANTES PROTOCOLE (depuis CMD.smali + SRC_DEST.smali) ─────────────
 class SRC_DEST:
@@ -96,6 +110,12 @@ donnees = {
         "erreur":           None,
         "unite":            "mV",
         "decimals":         0,
+    },
+    "temperature": {
+        "valeur":           None,
+        "unite":            "°C",
+        "derniere_lecture": None,
+        "erreur":           None,
     },
 }
 lock = threading.Lock()
@@ -204,6 +224,23 @@ def traiter_message(data, canal):
         elif cmd == CMD.NAK:
             donnees[pompe]["erreur"] = "NAK reçu de la pompe"
 
+
+# ─── TEMPÉRATURE DS18B20 ─────────────────────────────────────
+
+def boucle_temperature():
+    """Thread de lecture température toutes les 30s."""
+    while True:
+        val = lire_temperature()
+        now = datetime.now().isoformat()
+        with lock:
+            if val is not None:
+                donnees["temperature"]["valeur"]           = val
+                donnees["temperature"]["derniere_lecture"] = now
+                donnees["temperature"]["erreur"]           = None
+            else:
+                donnees["temperature"]["erreur"]           = "Lecture impossible"
+                donnees["temperature"]["derniere_lecture"] = now
+        time.sleep(30)
 
 # ─── CONNEXION ET RÉCEPTION ────────────────────────────────
 
@@ -763,6 +800,10 @@ class BridgeHandler(BaseHTTPRequestHandler):
             with lock:
                 snap = json.loads(json.dumps(donnees["redox"]))
             self._json(200, snap)
+        elif self.path == "/temperature":
+            with lock:
+                snap = json.loads(json.dumps(donnees["temperature"]))
+            self._json(200, snap)
 
         else:
             self._json(404, {"erreur": "Route inconnue"})
@@ -820,6 +861,8 @@ if __name__ == "__main__":
     print(f"  Dashboard → http://0.0.0.0:{BRIDGE_PORT}/")
     print(f"  API JSON  → http://0.0.0.0:{BRIDGE_PORT}/status")
     print("=" * 50)
+
+    threading.Thread(target=boucle_temperature, daemon=True).start()
 
     for label, cfg in POMPES.items():
         threading.Thread(

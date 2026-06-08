@@ -26,6 +26,17 @@ views:
           yellow: 700
           red: 800
 
+      - type: gauge
+        entity: sensor.piscine_temperature
+        name: Température
+        unit: "°C"
+        min: 10
+        max: 35
+        severity:
+          green: 18
+          yellow: 28
+          red: 30
+
       - type: entities
         title: Détails
         entities:
@@ -37,6 +48,8 @@ views:
             name: Redox mesuré
           - entity: sensor.piscine_redox_consigne
             name: Consigne Redox
+          - entity: sensor.piscine_temperature
+            name: Température eau
 
       - type: history-graph
         title: Historique pH 24h
@@ -55,3 +68,10 @@ views:
             name: Redox
           - entity: sensor.piscine_redox_consigne
             name: Consigne
+
+      - type: history-graph
+        title: Historique Température 24h
+        hours_to_show: 24
+        entities:
+          - entity: sensor.piscine_temperature
+            name: Température

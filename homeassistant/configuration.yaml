@@ -2,6 +2,7 @@
 # À ajouter dans configuration.yaml de Home Assistant
 # Remplacez 192.168.1.180 par l'IP de votre Raspberry Pi
 
+# ─── AstralPool Micro UP Bridge ───────────────────────────
 sensor:
   - platform: rest
     name: "Piscine pH"
@@ -49,7 +50,17 @@ sensor:
     name: "Piscine Redox Consigne"
     unique_id: piscine_redox_tpoint
     resource: http://192.168.1.180:8080/redox
-    value_template: "{{ value_json.tPoint }}"
+    value_template: "{{ value_json.tPoint | int }}"
     unit_of_measurement: "mV"
     state_class: measurement
     scan_interval: 30
+
+  - platform: rest
+    name: "Piscine Température"
+    unique_id: piscine_temperature
+    resource: http://192.168.1.180:8080/temperature
+    value_template: "{{ value_json.valeur }}"
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    scan_interval: 60
